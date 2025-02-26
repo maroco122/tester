@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>테스터기 기호 쉽게 알아보기</title>
+    <style>
+        /* 2025년 트렌드한 세련된 모바일 디자인 */
+        body {
+            font-family: 'Pretendard', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #333;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 1.5em;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .symbol-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .symbol-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .symbol-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .symbol-item:active {
+            transform: translateY(2px);
+        }
+
+        button {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e53);
+            border: none;
+            border-radius: 25px;
+            padding: 12px 25px;
+            color: white;
+            font-size: 1em;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        button:hover {
+            background: linear-gradient(45deg, #ff8e53, #ff6b6b);
+            transform: scale(1.05);
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        #explanation {
+            margin-top: 20px;
+            font-size: 1em;
+            line-height: 1.6;
+            color: #444;
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        #recommendation {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            z-index: 1000;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>테스터기 기호 쉽게 알아보기</h1>
+        <ul class="symbol-list" id="symbolList">
+            <!-- 기호 목록은 JavaScript로 동적으로 삽입 -->
+        </ul>
+        <button id="confirmBtn" style="display: none;">확인</button>
+        <div id="explanation"></div>
+        <div id="recommendation">
+            <h2>가성비 좋은 추천 테스터기 확인하러 가기</h2>
+        </div>
+    </div>
+
+    <script>
+        // 기호 데이터 (사용자가 제공한 기호 설명 기반)
+        const symbols = [
+            { name: "전압(V) 측정", symbol: "V 또는 V~ (AC), V⎓ (DC)", 
+              explanation: "전기가 얼마나 강한 힘으로 흐르는지 측정하는 기능이야. 타자기 소리: 딸깍 딸깍... AC 전압은 집 콘센트, DC 전압은 건전지로 측정해!" },
+            { name: "전류(A) 측정", symbol: "A 또는 A~ (AC), A⎓ (DC)", 
+              explanation: "전기가 흐르는 양을 측정하는 기능이야. 타자기 소리: 딸깍 딸깍... AC는 가전제품, DC는 배터리로 측정해!" },
+            { name: "저항(Ω) 측정", symbol: "Ω", 
+              explanation: "전기가 얼마나 잘 통하는지 측정하는 기능이야. 타자기 소리: 딸깍 딸깍... 전선은 전기가 잘 통하고, 고무는 안 통해!" },
+            { name: "연속성 테스트", symbol: "))) 또는 🔊", 
+              explanation: "두 선이 연결되어 있는지 확인하는 기능이야. 타자기 소리: 딸깍 딸깍... 연결되면 '삐——' 소리가 나!" },
+            { name: "다이오드 테스트", symbol: "▶|—", 
+              explanation: "다이오드가 잘 작동하는지 확인하는 기능이야. 타자기 소리: 딸깍 딸깍... 다이오드는 한 방향으로만 전기가 흐른다구!" },
+            { name: "주파수(Hz) 측정", symbol: "Hz", 
+              explanation: "전기가 얼마나 빠르게 변하는지 측정하는 기능이야. 타자기 소리: 딸깍 딸깍... 우리나라 전기는 60Hz야!" },
+            { name: "정전 용량(F) 측정", symbol: "F (μF 또는 nF)", 
+              explanation: "전기를 저장하는 커패시터가 얼마나 저장할 수 있는지 측정해. 타자기 소리: 딸깍 딸깍... 냉장고, 컴퓨터에 많이 쓰여!" },
+            { name: "온도(°C 또는 °F) 측정", symbol: "°C 또는 °F", 
+              explanation: "온도를 측정하는 기능이야. 타자기 소리: 딸깍 딸깍... 보일러, 에어컨 온도를 체크할 때 사용해!" },
+            { name: "트루 RMS 기능", symbol: "True RMS", 
+              explanation: "전압과 전류를 더 정확하게 측정하는 기능이야. 타자기 소리: 딸깍 딸깍... 복잡한 신호도 정확히 잡아!" },
+            { name: "자동 범위(Auto Range) 기능", symbol: "Auto", 
+              explanation: "최적의 범위를 자동으로 설정해주는 기능이야. 타자기 소리: 딸깍 딸깍... 측정값에 따라 테스터기가 알아서 조정해!" },
+            { name: "데이터 저장/로깅", symbol: "HOLD, MEM, REC", 
+              explanation: "측정값을 저장하거나 기록하는 기능이야. 타자기 소리: 딸깍 딸깍... 'HOLD'로 고정하고, 'MEM'으로 저장해!" },
+            { name: "클램프 미터 기능", symbol: "🛠️", 
+              explanation: "전선을 자르지 않고 전류를 측정하는 기능이야. 타자기 소리: 딸깍 딸깍... 공사 현장에서 안전하게 사용해!" },
+            { name: "백라이트 기능", symbol: "💡", 
+              explanation: "어두운 곳에서도 화면을 밝게 만들어주는 기능이야. 타자기 소리: 딸깍 딸깍... 밤에도 잘 보여!" }
+        ];
+
+        // DOM 요소 가져오기
+        const symbolList = document.getElementById('symbolList');
+        const confirmBtn = document.getElementById('confirmBtn');
+        const explanation = document.getElementById('explanation');
+        const recommendation = document.getElementById('recommendation');
+
+        // 기호 목록 동적으로 생성
+        symbols.forEach((symbol, index) => {
+            const li = document.createElement('li');
+            li.className = 'symbol-item';
+            li.innerHTML = `<strong>${symbol.name}</strong> (${symbol.symbol})`;
+            li.onclick = () => selectSymbol(index);
+            symbolList.appendChild(li);
+        });
+
+        let selectedSymbol = null;
+
+        function selectSymbol(index) {
+            selectedSymbol = symbols[index];
+            confirmBtn.style.display = 'block';
+        }
+
+        confirmBtn.onclick = () => {
+            if (selectedSymbol) {
+                // "가성비 좋은 추천 테스터기 확인하러 가기" 3초 동안 표시
+                recommendation.style.display = 'block';
+                setTimeout(() => {
+                    recommendation.style.display = 'none';
+                    showExplanation();
+                }, 3000);
+            }
+        };
+
+        function showExplanation() {
+            explanation.style.display = 'block';
+            explanation.innerHTML = `<p>${selectedSymbol.explanation}</p>`;
+            confirmBtn.style.display = 'none';
+        }
+
+        // "가성비 좋은 추천 테스터기 확인하러 가기" 클릭 시 URL로 이동
+        recommendation.onclick = () => {
+            window.location.href = 'https://smartstore.naver.com/allgagu/products/9912958550';
+        };
+    </script>
+</body>
+</html>
