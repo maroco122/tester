@@ -2,10 +2,9 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>테스터기 기호 쉽게 알아보기</title>
     <style>
-        /* 2025년 트렌드한 세련된 모바일 디자인 */
         body {
             font-family: 'Pretendard', sans-serif;
             margin: 0;
@@ -14,65 +13,63 @@
             min-height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
             color: #333;
+            overflow-x: hidden;
         }
 
         .container {
             background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            padding: 15px;
             width: 90%;
-            max-width: 400px;
+            max-width: 360px;
             text-align: center;
+            margin: 10px auto;
         }
 
         h1 {
-            font-size: 1.5em;
+            font-size: 1.2rem;
             color: #2c3e50;
-            margin-bottom: 20px;
+            margin: 0 0 15px;
             font-weight: 600;
         }
 
         .symbol-list {
             list-style: none;
             padding: 0;
+            max-height: 60vh;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .symbol-item {
             background: #f8f9fa;
             border-radius: 10px;
-            padding: 15px;
-            margin: 10px 0;
+            padding: 12px;
+            margin: 8px 0;
+            font-size: 0.9rem;
             cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .symbol-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, background 0.2s;
         }
 
         .symbol-item:active {
-            transform: translateY(2px);
+            transform: scale(0.98);
+            background: #e9ecef;
         }
 
         button {
             background: linear-gradient(45deg, #ff6b6b, #ff8e53);
             border: none;
-            border-radius: 25px;
-            padding: 12px 25px;
+            border-radius: 20px;
+            padding: 10px 20px;
             color: white;
-            font-size: 1em;
+            font-size: 0.9rem;
             cursor: pointer;
-            margin-top: 15px;
-            transition: background 0.3s, transform 0.2s;
-        }
-
-        button:hover {
-            background: linear-gradient(45deg, #ff8e53, #ff6b6b);
-            transform: scale(1.05);
+            margin-top: 10px;
+            width: 100%;
+            transition: transform 0.2s;
         }
 
         button:active {
@@ -80,9 +77,9 @@
         }
 
         #explanation {
-            margin-top: 20px;
-            font-size: 1em;
-            line-height: 1.6;
+            margin-top: 15px;
+            font-size: 0.85rem;
+            line-height: 1.5;
             color: #444;
             display: none;
             animation: fadeIn 0.5s ease-in;
@@ -96,24 +93,49 @@
             transform: translate(-50%, -50%);
             background: rgba(0, 0, 0, 0.8);
             color: white;
-            padding: 20px;
-            border-radius: 15px;
+            padding: 15px;
+            border-radius: 10px;
             text-align: center;
             z-index: 1000;
+            width: 80%;
+            max-width: 300px;
+        }
+
+        #recommendation h2 {
+            font-size: 1rem;
+            margin: 0;
         }
 
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
         }
+
+        @media (max-width: 360px) {
+            .container {
+                padding: 10px;
+            }
+            h1 {
+                font-size: 1rem;
+            }
+            .symbol-item {
+                font-size: 0.8rem;
+                padding: 10px;
+            }
+            button {
+                font-size: 0.8rem;
+                padding: 8px 15px;
+            }
+            #explanation {
+                font-size: 0.75rem;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>테스터기 기호 쉽게 알아보기</h1>
-        <ul class="symbol-list" id="symbolList">
-            <!-- 기호 목록은 JavaScript로 동적으로 삽입 -->
-        </ul>
+        <ul class="symbol-list" id="symbolList"></ul>
         <button id="confirmBtn" style="display: none;">확인</button>
         <div id="explanation"></div>
         <div id="recommendation">
@@ -122,7 +144,6 @@
     </div>
 
     <script>
-        // 기호 데이터 (사용자가 제공한 기호 설명 기반)
         const symbols = [
             { name: "전압(V) 측정", symbol: "V 또는 V~ (AC), V⎓ (DC)", 
               explanation: "전기가 얼마나 강한 힘으로 흐르는지 측정하는 기능이야. 타자기 소리: 딸깍 딸깍... AC 전압은 집 콘센트, DC 전압은 건전지로 측정해!" },
@@ -152,13 +173,12 @@
               explanation: "어두운 곳에서도 화면을 밝게 만들어주는 기능이야. 타자기 소리: 딸깍 딸깍... 밤에도 잘 보여!" }
         ];
 
-        // DOM 요소 가져오기
         const symbolList = document.getElementById('symbolList');
         const confirmBtn = document.getElementById('confirmBtn');
         const explanation = document.getElementById('explanation');
         const recommendation = document.getElementById('recommendation');
+        let selectedSymbol = null;
 
-        // 기호 목록 동적으로 생성
         symbols.forEach((symbol, index) => {
             const li = document.createElement('li');
             li.className = 'symbol-item';
@@ -167,16 +187,14 @@
             symbolList.appendChild(li);
         });
 
-        let selectedSymbol = null;
-
         function selectSymbol(index) {
             selectedSymbol = symbols[index];
             confirmBtn.style.display = 'block';
+            explanation.style.display = 'none';
         }
 
         confirmBtn.onclick = () => {
             if (selectedSymbol) {
-                // "가성비 좋은 추천 테스터기 확인하러 가기" 3초 동안 표시
                 recommendation.style.display = 'block';
                 setTimeout(() => {
                     recommendation.style.display = 'none';
@@ -191,7 +209,6 @@
             confirmBtn.style.display = 'none';
         }
 
-        // "가성비 좋은 추천 테스터기 확인하러 가기" 클릭 시 URL로 이동
         recommendation.onclick = () => {
             window.location.href = 'https://smartstore.naver.com/allgagu/products/9912958550';
         };
