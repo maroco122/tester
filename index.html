@@ -36,27 +36,12 @@
             font-weight: 600;
         }
 
-        .symbol-list {
-            list-style: none;
-            padding: 0;
-            max-height: 60vh;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .symbol-item {
-            background: #f8f9fa;
+        select {
+            width: 100%;
+            padding: 10px;
             border-radius: 10px;
-            padding: 12px;
-            margin: 8px 0;
+            border: 1px solid #ccc;
             font-size: 0.9rem;
-            cursor: pointer;
-            transition: transform 0.2s, background 0.2s;
-        }
-
-        .symbol-item:active {
-            transform: scale(0.98);
-            background: #e9ecef;
         }
 
         button {
@@ -77,33 +62,22 @@
         }
 
         #explanation {
-            margin-top: 15px;
+            margin-top: 20px;
             font-size: 0.85rem;
             line-height: 1.5;
-            color: #444;
+            color: #red;
             display: none;
             animation: fadeIn 0.5s ease-in;
         }
 
-        #recommendation {
+        .option-buttons {
             display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            z-index: 1000;
-            width: 80%;
-            max-width: 300px;
+            margin-top: 10px;
         }
 
-        #recommendation h2 {
-            font-size: 1rem;
-            margin: 0;
+        .option-buttons button {
+            width: 100%;
+            margin: 10px 1%;
         }
 
         @keyframes fadeIn {
@@ -118,10 +92,6 @@
             h1 {
                 font-size: 1rem;
             }
-            .symbol-item {
-                font-size: 0.8rem;
-                padding: 10px;
-            }
             button {
                 font-size: 0.8rem;
                 padding: 8px 15px;
@@ -135,83 +105,57 @@
 <body>
     <div class="container">
         <h1>테스터기 기호 쉽게 알아보기</h1>
-        <ul class="symbol-list" id="symbolList"></ul>
-        <button id="confirmBtn" style="display: none;">확인</button>
+        <select id="symbolDropdown">
+            <option value="" disabled selected>기능을 선택하세요</option>
+        </select>
+        <button id="confirmBtn">확인</button>
         <div id="explanation"></div>
-        <div id="recommendation">
-            <h2>가성비 좋은 추천 테스터기 확인하러 가기</h2>
+        <div class="option-buttons" id="optionButtons">
+            <button id="option1">가성비 좋은 테스터기 네이버 검색결과</button>
+            <button id="option2">물건너온 최상급 호스릴 검색결과</button>
         </div>
     </div>
 
     <script>
         const symbols = [
-            { name: "전압(V) 측정", symbol: "V 또는 V~ (AC), V⎓ (DC)", 
-              explanation: "전기가 얼마나 강한 힘으로 흐르는지 측정하는 기능이야. 타자기 소리: 딸깍 딸깍... AC 전압은 집 콘센트, DC 전압은 건전지로 측정해!" },
-            { name: "전류(A) 측정", symbol: "A 또는 A~ (AC), A⎓ (DC)", 
-              explanation: "전기가 흐르는 양을 측정하는 기능이야. 타자기 소리: 딸깍 딸깍... AC는 가전제품, DC는 배터리로 측정해!" },
-            { name: "저항(Ω) 측정", symbol: "Ω", 
-              explanation: "전기가 얼마나 잘 통하는지 측정하는 기능이야. 타자기 소리: 딸깍 딸깍... 전선은 전기가 잘 통하고, 고무는 안 통해!" },
-            { name: "연속성 테스트", symbol: "))) 또는 🔊", 
-              explanation: "두 선이 연결되어 있는지 확인하는 기능이야. 타자기 소리: 딸깍 딸깍... 연결되면 '삐——' 소리가 나!" },
-            { name: "다이오드 테스트", symbol: "▶|—", 
-              explanation: "다이오드가 잘 작동하는지 확인하는 기능이야. 타자기 소리: 딸깍 딸깍... 다이오드는 한 방향으로만 전기가 흐른다구!" },
-            { name: "주파수(Hz) 측정", symbol: "Hz", 
-              explanation: "전기가 얼마나 빠르게 변하는지 측정하는 기능이야. 타자기 소리: 딸깍 딸깍... 우리나라 전기는 60Hz야!" },
-            { name: "정전 용량(F) 측정", symbol: "F (μF 또는 nF)", 
-              explanation: "전기를 저장하는 커패시터가 얼마나 저장할 수 있는지 측정해. 타자기 소리: 딸깍 딸깍... 냉장고, 컴퓨터에 많이 쓰여!" },
-            { name: "온도(°C 또는 °F) 측정", symbol: "°C 또는 °F", 
-              explanation: "온도를 측정하는 기능이야. 타자기 소리: 딸깍 딸깍... 보일러, 에어컨 온도를 체크할 때 사용해!" },
-            { name: "트루 RMS 기능", symbol: "True RMS", 
-              explanation: "전압과 전류를 더 정확하게 측정하는 기능이야. 타자기 소리: 딸깍 딸깍... 복잡한 신호도 정확히 잡아!" },
-            { name: "자동 범위(Auto Range) 기능", symbol: "Auto", 
-              explanation: "최적의 범위를 자동으로 설정해주는 기능이야. 타자기 소리: 딸깍 딸깍... 측정값에 따라 테스터기가 알아서 조정해!" },
-            { name: "데이터 저장/로깅", symbol: "HOLD, MEM, REC", 
-              explanation: "측정값을 저장하거나 기록하는 기능이야. 타자기 소리: 딸깍 딸깍... 'HOLD'로 고정하고, 'MEM'으로 저장해!" },
-            { name: "클램프 미터 기능", symbol: "🛠️", 
-              explanation: "전선을 자르지 않고 전류를 측정하는 기능이야. 타자기 소리: 딸깍 딸깍... 공사 현장에서 안전하게 사용해!" },
-            { name: "백라이트 기능", symbol: "💡", 
-              explanation: "어두운 곳에서도 화면을 밝게 만들어주는 기능이야. 타자기 소리: 딸깍 딸깍... 밤에도 잘 보여!" }
+            { name: "전압(V) 측정", symbol: "V 또는 V~ (AC), V⎓ (DC)", explanation: "전기가 얼마나 강한 힘으로 흐르는지 측정하는 기능이야." },
+            { name: "전류(A) 측정", symbol: "A 또는 A~ (AC), A⎓ (DC)", explanation: "전기가 흐르는 양을 측정하는 기능이야." },
+            { name: "저항(Ω) 측정", symbol: "Ω", explanation: "전기가 얼마나 잘 통하는지 측정하는 기능이야." },
+            { name: "연속성 테스트", symbol: "))) 또는 🔊", explanation: "두 선이 연결되어 있는지 확인하는 기능이야." },
+            { name: "다이오드 테스트", symbol: "▶|—", explanation: "다이오드가 잘 작동하는지 확인하는 기능이야." },
+            { name: "주파수(Hz) 측정", symbol: "Hz", explanation: "전기가 얼마나 빠르게 변하는지 측정하는 기능이야." },
+            { name: "정전 용량(F) 측정", symbol: "F (μF 또는 nF)", explanation: "전기를 저장하는 커패시터가 얼마나 저장할 수 있는지 측정해." },
+            { name: "온도(°C 또는 °F) 측정", symbol: "°C 또는 °F", explanation: "온도를 측정하는 기능이야." },
         ];
 
-        const symbolList = document.getElementById('symbolList');
+        const dropdown = document.getElementById('symbolDropdown');
         const confirmBtn = document.getElementById('confirmBtn');
         const explanation = document.getElementById('explanation');
-        const recommendation = document.getElementById('recommendation');
-        let selectedSymbol = null;
+        const optionButtons = document.getElementById('optionButtons');
 
         symbols.forEach((symbol, index) => {
-            const li = document.createElement('li');
-            li.className = 'symbol-item';
-            li.innerHTML = `<strong>${symbol.name}</strong> (${symbol.symbol})`;
-            li.onclick = () => selectSymbol(index);
-            symbolList.appendChild(li);
+            const option = document.createElement('option');
+            option.value = index;
+            option.textContent = `${symbol.name} (${symbol.symbol})`;
+            dropdown.appendChild(option);
         });
 
-        function selectSymbol(index) {
-            selectedSymbol = symbols[index];
-            confirmBtn.style.display = 'block';
-            explanation.style.display = 'none';
-        }
-
         confirmBtn.onclick = () => {
-            if (selectedSymbol) {
-                recommendation.style.display = 'block';
-                setTimeout(() => {
-                    recommendation.style.display = 'none';
-                    showExplanation();
-                }, 3000);
+            const selectedIndex = dropdown.value;
+            if (selectedIndex !== "") {
+                explanation.style.display = 'block';
+                explanation.innerHTML = `<p>${symbols[selectedIndex].explanation}</p>`;
+                optionButtons.style.display = 'block';
             }
         };
+      
+      option1.onclick = () => {
+    window.location.href = "https://msearch.shopping.naver.com/search/all?adQuery=%ED%85%8C%EC%8A%A4%ED%84%B0%EA%B8%B0&maxPrice=48600&minPrice=48600&origQuery=%ED%85%8C%EC%8A%A4%ED%84%B0%EA%B8%B0&pagingIndex=1&pagingSize=40&productSet=total&query=%ED%85%8C%EC%8A%A4%ED%84%B0%EA%B8%B0&sort=rel&viewType=list";
+};
 
-        function showExplanation() {
-            explanation.style.display = 'block';
-            explanation.innerHTML = `<p>${selectedSymbol.explanation}</p>`;
-            confirmBtn.style.display = 'none';
-        }
-
-        recommendation.onclick = () => {
-            window.location.href = 'https://smartstore.naver.com/allgagu/products/9912958550';
-        };
+option2.onclick = () => {
+    window.location.href = "https://msearch.shopping.naver.com/search/all?adQuery=%ED%83%80%EC%B9%B4%EA%B8%B0%20%ED%98%B8%EC%8A%A4%EB%A6%B4&maxPrice=52500&minPrice=52500&naverPay=true&origQuery=%ED%83%80%EC%B9%B4%EA%B8%B0%20%ED%98%B8%EC%8A%A4%EB%A6%B4&pagingIndex=1&pagingSize=40&productSet=total&query=%ED%83%80%EC%B9%B4%EA%B8%B0%20%ED%98%B8%EC%8A%A4%EB%A6%B4&sort=rel&viewType=list";
+};
     </script>
 </body>
 </html>
